@@ -5,13 +5,20 @@ with open("readme.md", "r") as fh:
 
 setuptools.setup(
     name="grabutils",
-    version="0.0.1",
+    version="0.0.2",
     author="Ilya Babich",
     author_email="sniter@gmail.com",
     description="Utils and helpers for crawling websites",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/sniter/grabutils",
+    install_requires=[
+        'beautifulsoup4',
+        'lxml'
+    ],
+    tests_require=[
+        'pytest'
+    ],
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
