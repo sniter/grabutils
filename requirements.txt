@@ -1,0 +1,9 @@
+# Parsing
+beautifulsoup4
+lxml
+
+# Formatting
+black
+
+# Testing
+pytest
