@@ -79,9 +79,15 @@ class Endpoint:
         paramz.update(**params)
         return Endpoint(urljoin(self.base + '/', '/'.join(map(quote_plus, map(str, context))), **paramz))
 
-    def __getattr__(self, key):
+    def __getattr__(self, key: str):
         if key in {'get', 'post', 'put', 'delete'}:
-            self.logger.debug(key, self.base)
-            method = getattr(requests, key)
-            return partial(method, self.base)
+            logger = self.logger
+            url = self.base
+
+            def wrap(*args, **kwargs):
+                logger.debug(f"{key.upper()} {url}")
+                method = getattr(requests, key)
+                return method(url, *args, **kwargs)
+
+            return wrap
         return Endpoint(urljoin(self.base + '/', key), **self.params)
