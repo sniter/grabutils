@@ -1,3 +1,4 @@
+import logging
 from abc import ABC
 from functools import partial
 
@@ -62,6 +63,8 @@ class Dto(ABC):
 
 
 class Endpoint:
+    logger = logging.getLogger(__name__)
+
     def __init__(self, base, **params):
         self.base = base
         self.params = params
@@ -78,7 +81,7 @@ class Endpoint:
 
     def __getattr__(self, key):
         if key in {'get', 'post', 'put', 'delete'}:
-            print(key, self.base)
+            self.logger.debug(key, self.base)
             method = getattr(requests, key)
             return partial(method, self.base)
         return Endpoint(urljoin(self.base + '/', key), **self.params)
