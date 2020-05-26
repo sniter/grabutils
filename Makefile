@@ -9,10 +9,10 @@ build: clean
 clean:
 	rm -fr dist
 
-deploy_test:
+deploy_test: build
 	$(TWINE) upload -u __token__ --repository testpypi dist/*
 
-deploy:
+deploy: build
 	$(TWINE) upload -u __token__ --repository pypi dist/*
 
 install_test:
