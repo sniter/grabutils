@@ -5,7 +5,7 @@ with open("readme.md", "r") as fh:
 
 setuptools.setup(
     name="grabutils",
-    version="0.0.6",
+    version="0.0.7",
     author="Ilya Babich",
     author_email="sniter@gmail.com",
     description="Utils and helpers for crawling websites",
