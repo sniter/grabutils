@@ -1,1 +1,1 @@
-from .timer import timer, Timer
+from .timer import Timer
