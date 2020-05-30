@@ -85,7 +85,7 @@ class Endpoint:
             url = self.base
 
             def wrap(*args, **kwargs):
-                logger.debug(f"{key.upper()} {url}")
+                # logger.debug(f"{key.upper()} {url}")
                 method = getattr(requests, key)
                 return method(url, *args, **kwargs)
 
