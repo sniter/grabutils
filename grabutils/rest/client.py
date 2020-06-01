@@ -1,6 +1,5 @@
 import logging
 from abc import ABC
-from functools import partial
 
 from urllib.parse import urljoin, urlencode, quote_plus
 
@@ -85,7 +84,7 @@ class Endpoint:
             url = self.base
 
             def wrap(*args, **kwargs):
-                # logger.debug(f"{key.upper()} {url}")
+                logger.debug(f"{key.upper()} {url}")
                 method = getattr(requests, key)
                 return method(url, *args, **kwargs)
 

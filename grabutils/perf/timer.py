@@ -128,4 +128,4 @@ class Timer:
         self.cpu_sys = self.cpu_end[1] - self.cpu_start[1]
         self.cpu_tot = self.cpu_user + self.cpu_sys
 
-        logging.debug(repr(self))
+        self.logger.debug(repr(self))
