@@ -3,9 +3,22 @@ import setuptools
 with open("readme.md", "r") as fh:
     long_description = fh.read()
 
+bs_deps = [
+    'beautifulsoup4',
+    'lxml'
+]
+
+ssh_deps = [
+    'paramiko[all]',
+    'scp',
+]
+rest_deps = [
+    'requests'
+]
+
 setuptools.setup(
     name="grabutils",
-    version="0.0.9",
+    version="0.0.10",
     author="Ilya Babich",
     author_email="sniter@gmail.com",
     description="Utils and helpers for crawling websites",
@@ -16,6 +29,12 @@ setuptools.setup(
         'beautifulsoup4',
         'lxml'
     ],
+    extras_require={
+        'bs': bs_deps,
+        'ssh': ssh_deps,
+        'rest': rest_deps,
+        'all': bs_deps + ssh_deps + rest_deps
+    },
     tests_require=[
         'pytest'
     ],

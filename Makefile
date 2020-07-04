@@ -3,11 +3,11 @@ PY=$(VENV)/bin/python
 TWINE=$(VENV)/bin/twine
 
 build: clean
-	rm -fr *.egg-info
 	$(PY) setup.py sdist bdist_wheel
 
 clean:
 	rm -fr dist
+	rm -fr *.egg-info
 
 deploy_test: build
 	$(TWINE) upload -u __token__ --repository testpypi dist/*

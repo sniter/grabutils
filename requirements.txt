@@ -2,8 +2,15 @@
 beautifulsoup4
 lxml
 
+# Rest
+requests
+
 # Formatting
 black
 
 # Testing
 pytest
+
+# SSH
+paramiko[all]
+scp
