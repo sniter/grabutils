@@ -17,7 +17,11 @@ def shexec(cmd, stdout=True) -> int or None:
         for line in proc.stdout:
             print(line.strip())
 
+    errors = False
     for line in proc.stderr:
+        if not errors:
+            logging.error(cmd)
+            errors = True
         logging.error(line)
 
     return proc.returncode
