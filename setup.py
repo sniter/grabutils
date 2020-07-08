@@ -9,7 +9,7 @@ bs_deps = [
 ]
 
 ssh_deps = [
-    'paramiko[all]',
+    'paramiko[ed25519]',
     'scp',
 ]
 rest_deps = [
@@ -18,17 +18,14 @@ rest_deps = [
 
 setuptools.setup(
     name="grabutils",
-    version="0.0.10",
+    version="0.0.12",
     author="Ilya Babich",
     author_email="sniter@gmail.com",
     description="Utils and helpers for crawling websites",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/sniter/grabutils",
-    install_requires=[
-        'beautifulsoup4',
-        'lxml'
-    ],
+    install_requires=[],
     extras_require={
         'bs': bs_deps,
         'ssh': ssh_deps,

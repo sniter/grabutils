@@ -12,5 +12,5 @@ black
 pytest
 
 # SSH
-paramiko[all]
+paramiko[ed25519]
 scp
