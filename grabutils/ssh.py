@@ -108,10 +108,6 @@ def ssh_cfg(**kwargs):
         pubkey_path = tmpdir_.joinpath(ssh_key_fname + '.pub')
         conf_path = tmpdir_.joinpath('config')
 
-        pkey_path.chmod(0o600)
-        pubkey_path.chmod(0o600)
-        conf_path.chmod(0o600)
-
         with pkey_path.open('wb') as wh:
             wh.write(ssh_pkey)
 
@@ -127,5 +123,9 @@ Host {ssh_alias}
     User            {ssh_user}
     IdentityFile    {pkey_path}
 ''')
+
+        pkey_path.chmod(0o600)
+        pubkey_path.chmod(0o600)
+        conf_path.chmod(0o600)
 
         yield str(conf_path)
