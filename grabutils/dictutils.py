@@ -1,6 +1,6 @@
 class dictview:
 
-    def __init__(self, data, *path, inline=True):
+    def __init__(self, data, *path, inline=False):
         self.data = data
         self.inline = inline
         self.path = path
@@ -34,7 +34,7 @@ class dictview:
             self.data = ret
             return self
         else:
-            return dictview(ret)
+            return dictview(ret, inline=self.inline)
 
     def __getitem__(self, item) -> 'dictview':
         return self.__get_value(item)
