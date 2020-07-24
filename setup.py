@@ -18,7 +18,7 @@ rest_deps = [
 
 setuptools.setup(
     name="grabutils",
-    version="0.0.14",
+    version="0.0.15",
     author="Ilya Babich",
     author_email="sniter@gmail.com",
     description="Utils and helpers for crawling websites",
