@@ -8,6 +8,12 @@ Utils and helpers for crawling websites
 pip install grabutils
 ```
 
+or from Github
+
+```shell script
+pip install git+git://github.com/sniter/grabutils.git#egg=grabutils 
+```
+
 ## Usage
 
 See tests as usage example
