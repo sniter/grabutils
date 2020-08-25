@@ -1,6 +1,7 @@
 import functools as fn
+import operator as op
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 
 class BsField:
@@ -10,12 +11,11 @@ class BsField:
         self.many = many
         self.then = then
 
-    def __get__(self, obj, owner):
-        page = obj.page()
+    def __call__(self, node):
         then = self.then
 
         if self.many:
-            res = page.select(self.selector)
+            res = node.select(self.selector) if self.selector else node
             return [
                 fn.reduce(lambda v, func: func(v), then, r)
                 for r in res
@@ -23,20 +23,29 @@ class BsField:
             ] if then else res
 
         else:
-            res = page.select_one(self.selector)
+            res = node.select_one(self.selector) if self.selector else node
             return fn.reduce(lambda v, func: func(v), then, res) if then and res else res
+
+    def __get__(self, obj, owner):
+        if not obj or not isinstance(obj, BsPageObj):
+            return self
+
+        page = obj.page()
+        then = self.then
+
+        return self.__call__(page)
 
 
 class BsPageObj:
-    parser = 'lxml'
+    _parser = 'lxml'
     _persist = False
     _enqueue = False
 
     def __init__(self, page: str):
-        if isinstance(page, BeautifulSoup):
+        if isinstance(page, BeautifulSoup) or isinstance(page, Tag):
             self.__page = page
         else:
-            self.__page = BeautifulSoup(str(page), features=self.parser)
+            self.__page = BeautifulSoup(str(page), features=self._parser)
 
     def page(self):
         return self.__page
@@ -80,6 +89,17 @@ class Nested:
         return self.page_obj_clazz(value).as_dict()
 
 
+inner_text = op.attrgetter('string')
+stripped = op.methodcaller('strip')
+
+
+def as_attr(attr):
+    def as_attr_wrapper(node):
+        return node.attrs[attr]
+
+    return as_attr_wrapper
+
+
 def parse_href(node):
     return dict(
         href=node.attrs['href'],
@@ -109,3 +129,10 @@ class Href(BsField):
 class Image(BsField):
     def __init__(self, selector, **kwargs):
         super(Image, self).__init__(selector, parse_img, **kwargs)
+
+class List:
+    def __init__(self, field: BsField):
+        self.field = field
+
+    def __call__(self, node):
+        return self.field.__call__(node)

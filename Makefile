@@ -1,6 +1,9 @@
 VENV=venv
 PY=$(VENV)/bin/python
 TWINE=$(VENV)/bin/twine
+PIP=$(VENV)/bin/pip
+
+
 
 build: clean
 	$(PY) setup.py sdist bdist_wheel
@@ -8,6 +11,9 @@ build: clean
 clean:
 	rm -fr dist
 	rm -fr *.egg-info
+
+deps:
+	$(PIP) install -r requirements.txt
 
 deploy_test: build
 	$(TWINE) upload -u __token__ --repository testpypi dist/*

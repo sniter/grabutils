@@ -2,15 +2,36 @@ import operator as op
 
 import pytest
 
-from grabutils.bs.pageobj import BsField, BsPageObj, Href, Image
+from grabutils.bs.pageobj import (
+    BsField, BsPageObj, Href, Image, Nested,
+    inner_text, stripped, as_attr, List
+)
+
+
+class Language1(BsPageObj):
+    href = BsField('a', as_attr('href'), many=True)
+    label = BsField('a', inner_text, many=True)
+
+
+class Language2(BsPageObj):
+    href = BsField(None, as_attr('href'))
+    label = BsField(None, inner_text)
+
+
+class Language3(BsPageObj):
+    languages = BsField('a', Nested(Language2), many=True)
 
 
 class PageObject(BsPageObj):
-    paragraph = BsField('p', op.attrgetter('string'), op.methodcaller('strip'))
+    paragraph = BsField('p', inner_text, stripped)
     link = Href('.test-url')
     image = Image('.test-img')
 
-    items = BsField('ul > li', op.attrgetter('string'), op.methodcaller('strip'), many=True)
+    items = BsField('ul > li', inner_text, stripped, many=True)
+    languages = BsField('.languages a', inner_text, many=True)
+    languages_1 = BsField('.languages', Nested(Language1))
+    languages_2 = BsField('.languages a', Nested(Language2), many=True)
+    languages_3 = BsField('.languages > div', List(BsField('a', Nested(Language2), many=True)), many=True)
 
 
 @pytest.fixture(scope="module")
@@ -42,7 +63,34 @@ def test_image(page):
     assert image['label'] == 'Python logo'
 
 
-def test_items(page):
+def test_items(page: PageObject):
     items = page.items
 
     assert items == ['Alpha', 'Beta', 'Gamma']
+
+
+def test_nested(page: PageObject):
+    languages = page.languages
+    languages_1 = page.languages_1
+    languages_2 = page.languages_2
+    languages_3 = page.languages_3
+
+    assert languages == ['Ada', 'Java', 'C++', 'Cobol', 'D', 'Go']
+    assert languages_1 == {
+        'href': ['http://ada', 'https://java', 'http://cpp', 'http://cobol', 'http://d', 'http://go'],
+        'label': ['Ada', 'Java', 'C++', 'Cobol', 'D', 'Go']
+    }
+    assert languages_2 == [
+        {'href': 'http://ada', 'label': 'Ada'},
+        {'href': 'https://java', 'label': 'Java'},
+        {'href': 'http://cpp', 'label': 'C++'},
+        {'href': 'http://cobol', 'label': 'Cobol'},
+        {'href': 'http://d', 'label': 'D'},
+        {'href': 'http://go', 'label': 'Go'}
+    ]
+    assert languages_3 == [
+        [{'href': 'http://ada', 'label': 'Ada'}, {'href': 'https://java', 'label': 'Java'}],
+        [{'href': 'http://cpp', 'label': 'C++'}],
+        [{'href': 'http://cobol', 'label': 'Cobol'}],
+        [{'href': 'http://d', 'label': 'D'}, {'href': 'http://go', 'label': 'Go'}]
+    ]

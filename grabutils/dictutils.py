@@ -1,5 +1,5 @@
-from decorator import contextmanager
 import re
+from contextlib import contextmanager
 
 
 class dictview:
