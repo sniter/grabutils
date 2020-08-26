@@ -14,3 +14,7 @@ pytest
 # SSH
 paramiko[ed25519]
 scp
+
+# build
+wheel
+twine

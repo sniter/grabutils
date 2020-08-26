@@ -3,9 +3,22 @@ import operator as op
 import pytest
 
 from grabutils.bs.pageobj import (
-    BsField, BsPageObj, Href, Image, Nested,
+    BsField, BsPageObj, PageObject, Href, Image, Nested,
     inner_text, stripped, as_attr, List
 )
+
+
+class PageObjectConstant(PageObject):
+    href = BsField('a', as_attr('href'), many=True)
+    label = BsField('a', inner_text, many=True)
+    constant1 = 1
+
+    @property
+    def constant2(self):
+        return 2
+
+    class Meta:
+        fields = 'href', 'label', 'constant1', 'constant2'
 
 
 class Language1(BsPageObj):
