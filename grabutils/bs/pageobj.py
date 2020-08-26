@@ -27,10 +27,13 @@ class BsField:
             return fn.reduce(lambda v, func: func(v), then, res) if then and res else res
 
     def __get__(self, obj, owner):
-        if not obj or not isinstance(obj, BsPageObj):
+        if not (obj and isinstance(obj, BsPageObj) or isinstance(obj, PageObject)):
             return self
 
-        page = obj.page()
+        if isinstance(obj, BsPageObj):
+            page = obj.page()
+        else:
+            page = obj.as_source()
         then = self.then
 
         return self.__call__(page)
@@ -40,30 +43,72 @@ class PageObjMeta(type):
     def __new__(mcs, name, bases, attrs):
         klass = super().__new__(mcs, name, bases, attrs)
 
-        fields = []
-
-        bs_fields = [
+        fields = set(
             field_name
             for field_name, field
             in attrs.items()
-            if isinstance(field, BsField)
-        ]
+            if (
+                isinstance(field, BsField) or
+                (callable(field) and field_name.startswith('attr_')) or
+                not (
+                    field_name.startswith('_') or
+                    field_name == 'Meta' or
+                    callable(field)
+                )
 
-        fields += bs_fields
+            )
+        )
 
         meta = klass.Meta
 
         meta_fields = getattr(meta, 'fields') if hasattr(meta, 'fields') else None
         meta_ignore_fields = getattr(meta, 'ignore_fields') if hasattr(meta, 'ignore_fields') else None
+        meta_parser = getattr(meta, 'parser') if hasattr(meta, 'parser') else 'lxml'
 
         if meta_fields and meta_ignore_fields:
             raise Exception('Both attributes *fields* and *ignore_fields* are declared in Meta class ')
 
+        if meta_fields:
+            fields &= set(meta_fields)
+
+        if meta_ignore_fields:
+            fields -= set(meta_ignore_fields)
+
+        klass._parser = meta_parser
+        klass._export_fields = tuple(fields)
         return klass
 
 
 class PageObject(metaclass=PageObjMeta):
+
+    def __init__(self, page: str):
+        if isinstance(page, BeautifulSoup) or isinstance(page, Tag):
+            self.__page = page
+        else:
+            self.__page = BeautifulSoup(str(page), features=self._parser)
+        self.__value = None
+
+    def as_source(self):
+        return self.__page
+
+    def __extract_key(self, field):
+        attr = getattr(self, field)
+        if callable(attr):
+            return field.replace('attr_', ''), attr(self.__page)
+
+        return field, attr
+
+    def as_dict(self):
+        if not self.__value:
+            self.__value = dict(
+                self.__extract_key(field)
+                for field
+                in self._export_fields
+            )
+        return self.__value
+
     class Meta:
+        parser: str = 'lxml'
         fields: tuple = None
         ignore_fields: tuple = None
 

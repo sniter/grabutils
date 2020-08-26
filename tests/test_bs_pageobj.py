@@ -9,16 +9,22 @@ from grabutils.bs.pageobj import (
 
 
 class PageObjectConstant(PageObject):
-    href = BsField('a', as_attr('href'), many=True)
-    label = BsField('a', inner_text, many=True)
+    hrefs = BsField('a', as_attr('href'), many=True)
+    labels = BsField('a', inner_text, many=True)
+    divs = BsField('div', inner_text, many=True)
     constant1 = 1
+
+    @staticmethod
+    def attr_fname(*args, **kwargs):
+        return 'fname'
 
     @property
     def constant2(self):
         return 2
 
     class Meta:
-        fields = 'href', 'label', 'constant1', 'constant2'
+        # fields = 'href', 'label', 'constant1', 'constant2'
+        ignore_fields = 'divs',
 
 
 class Language1(BsPageObj):
@@ -51,6 +57,24 @@ class PageObject(BsPageObj):
 def page(html):
     return PageObject(html)
 
+
+def test_page_object(html):
+    pageobj = PageObjectConstant(html)
+    value = pageobj.as_dict()
+
+    assert value == {
+        'constant1': 1,
+        'constant2': 2,
+        'fname': 'fname',
+        'hrefs': ['https://www.python.org/',
+                  'http://ada',
+                  'https://java',
+                  'http://cpp',
+                  'http://cobol',
+                  'http://d',
+                  'http://go'],
+        'labels': ['Python', 'Ada', 'Java', 'C++', 'Cobol', 'D', 'Go']
+    }
 
 def test_link(page):
     link = page.link
