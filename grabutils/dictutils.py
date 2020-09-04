@@ -62,7 +62,6 @@ class dictview:
         except:
             return 0
 
-
     def __get_value(self, item):
         if not self.__container_data:
             ret = self.__container_data
@@ -87,6 +86,9 @@ class dictview:
         return dictview(output, inline=self.inline)
 
     def __getitem__(self, item) -> 'dictview':
+        if self.__container_data is None:
+            return self._wrap_output(self.__container_data)
+
         if hasattr(self.__container_data, '__getitem__'):
             try:
                 res = self.__container_data.__getitem__(item)
@@ -106,7 +108,6 @@ class dictview:
             res = None
 
         return self._wrap_output(res)
-
 
     def __contains__(self, item) -> bool:
         if hasattr(self.__container_data, '__contains__'):

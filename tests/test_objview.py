@@ -12,13 +12,43 @@ def data1() -> dict:
             'field': ['is', 'too', {'nested': True}],
             'fields': ['a', 'b', 'c'],
             'values': [1, 2, 3],
-            'notfoo': 'notfoo'
+            'notfoo': 'notfoo',
+            'nested': [
+                {'currency': 'USD', 'amount': 600.},
+                {'currency': 'AUD', 'amount': 1200.},
+                {'currency': 'EUR', 'amount': 30.},
+            ]
+        },
+        'data': {
+            'aaaaaa': {
+                'content': 'Hello, World'
+            },
+            'dddddd': {
+                'content': 'Shalom!'
+            },
+            'bbbbb': {
+                '__ref': 'aaaaaa'
+            },
+            'cccccc': {
+                '__refs': ['bbbbb', 'dddddd']
+            }
         }
     }
 
 
 @pytest.fixture
 def model_class1() -> t.Type[ObjectView]:
+    class Ref(Project):
+        """
+        Ref substitutor
+        """
+        def __init__(self, ref_path: t.Iterable[any], *path, **kwargs):
+            super(Ref, self).__init__(*path, **kwargs)
+            self.ref_path = ref_path
+
+
+
+
     class MyView(ObjectView):
         is_nested = Project('current', 'field', 2, 'nested')
         is_too = Project('current', 'field', 1)

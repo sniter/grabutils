@@ -44,6 +44,9 @@ def test_value_ctx(data: dictview):
     with data['not_existing_key'].value_ctx as value:
         assert value is None
 
+    with data.not_existing_key[1000].value_ctx as value:
+        assert value is None
+
     with data[1000].value_ctx as value:
         assert value is None
 
