@@ -146,3 +146,4 @@ def test_nested(page: PageObject):
     ]
 
     assert '_invisible' not in page.as_dict()
+    assert 'custom_field' in page.as_dict()
