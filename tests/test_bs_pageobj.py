@@ -52,6 +52,15 @@ class PageObject(BsPageObj):
     languages_2 = BsField('.languages a', Nested(Language2), many=True)
     languages_3 = BsField('.languages > div', List(BsField('a', Nested(Language2), many=True)), many=True)
 
+    _invisible = BsField('.languages a', inner_text, many=True)
+
+    @property
+    def custom_field(self):
+        return [
+            v for idx, v in enumerate(self._invisible)
+            if idx in (1, 2, 4)
+        ]
+
 
 @pytest.fixture(scope="module")
 def page(html):
@@ -75,6 +84,7 @@ def test_page_object(html):
                   'http://go'],
         'labels': ['Python', 'Ada', 'Java', 'C++', 'Cobol', 'D', 'Go']
     }
+
 
 def test_link(page):
     link = page.link
@@ -130,4 +140,7 @@ def test_nested(page: PageObject):
         [{'href': 'http://cpp', 'label': 'C++'}],
         [{'href': 'http://cobol', 'label': 'Cobol'}],
         [{'href': 'http://d', 'label': 'D'}, {'href': 'http://go', 'label': 'Go'}]
+    ]
+    assert page.custom_field == [
+        'Java', 'C++', 'D'
     ]
