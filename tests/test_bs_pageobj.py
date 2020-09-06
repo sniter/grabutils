@@ -144,3 +144,5 @@ def test_nested(page: PageObject):
     assert page.custom_field == [
         'Java', 'C++', 'D'
     ]
+
+    assert '_invisible' not in page.as_dict()
