@@ -42,12 +42,10 @@ def model_class1() -> t.Type[ObjectView]:
         """
         Ref substitutor
         """
+
         def __init__(self, ref_path: t.Iterable[any], *path, **kwargs):
             super(Ref, self).__init__(*path, **kwargs)
             self.ref_path = ref_path
-
-
-
 
     class MyView(ObjectView):
         is_nested = Project('current', 'field', 2, 'nested')
@@ -80,7 +78,7 @@ def test_objview1(data1: dict, model_class1: t.Type[ObjectView]):
     assert model.is_too == 'too'
 
     with pytest.raises(KeyError):
-        model.is_keyerror is None
+        assert model.is_keyerror is None
 
     with pytest.raises(KeyError):
         assert model.is_keyerror2 == 10
