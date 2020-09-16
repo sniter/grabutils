@@ -64,8 +64,8 @@ def test_scan(data):
 
 def test_regex(data):
     pattern = re.compile('^(a|b|e|f)$')
-    assert data[pattern].value == {
-        'a': {'b': 1},
-        'b': [{'c': 'c'}, 'd', 4, ('e', 5)],
-        'e': None
-    }
+    assert data[pattern].value == [
+        {'b': 1},
+        [{'c': 'c'}, 'd', 4, ('e', 5)],
+        None
+    ]

@@ -1,5 +1,4 @@
 import re
-import typing as t
 from contextlib import contextmanager
 
 
@@ -57,6 +56,10 @@ class dictview:
     def __repr__(self):
         return self.__str__()
 
+    def __iter__(self):
+        if hasattr(self.__container_data, '__iter__'):
+            return self.__container_data.__iter__()
+
     def __len__(self):
         try:
             return self.__container_data.__len__()
@@ -79,17 +82,15 @@ class dictview:
 
         return self._wrap_output(ret)
 
-    def __search(self, pattern: re.Pattern) -> any:
+    def __search(self, pattern: re.Pattern) -> list:
         if isinstance(self.__container_data, dict):
-            return dict((k, v) for k, v in self.__container_data.items() if pattern.search(k))
-        elif isinstance(self.__container_data, list):
+            return [v for k, v in self.__container_data.items() if pattern.search(k)]
+        elif isinstance(self.__container_data, list) or isinstance(self.__container_data, tuple):
             return [v for v in self.__container_data if pattern.search(v)]
-        elif isinstance(self.__container_data, tuple):
-            return tuple([v for v in self.__container_data if pattern.search(v)])
-        elif isinstance(self.__container_data, tuple):
-            return {v for v in self.__container_data if pattern.search(v)}
+        elif isinstance(self.__container_data, set):
+            return [v for v in self.__container_data if pattern.search(v)]
         else:
-            return None
+            return []
 
     def _wrap_output(self, output):
         if self.inline:
