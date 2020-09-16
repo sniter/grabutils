@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 from grabutils.dictutils import dictview
@@ -15,7 +17,7 @@ def data() -> dictview:
 
 
 def test_value(data: dictview):
-    #a = data.a
+    # a = data.a
     assert data.a.value == {'b': 1}
     assert data.b[0].value == {'c': 'c'}
     assert data.b[100].value is None
@@ -58,3 +60,12 @@ def test_scan(data):
     assert data.scan('b.100').value is None
     assert data.scan('not_existing_key').value is None
     assert data.scan('a.b.c.d.e.f.-1000').value is None
+
+
+def test_regex(data):
+    pattern = re.compile('^(a|b|e|f)$')
+    assert data[pattern].value == {
+        'a': {'b': 1},
+        'b': [{'c': 'c'}, 'd', 4, ('e', 5)],
+        'e': None
+    }

@@ -1,4 +1,5 @@
 import re
+import typing as t
 from contextlib import contextmanager
 
 
@@ -78,6 +79,18 @@ class dictview:
 
         return self._wrap_output(ret)
 
+    def __search(self, pattern: re.Pattern) -> any:
+        if isinstance(self.__container_data, dict):
+            return dict((k, v) for k, v in self.__container_data.items() if pattern.search(k))
+        elif isinstance(self.__container_data, list):
+            return [v for v in self.__container_data if pattern.search(v)]
+        elif isinstance(self.__container_data, tuple):
+            return tuple([v for v in self.__container_data if pattern.search(v)])
+        elif isinstance(self.__container_data, tuple):
+            return {v for v in self.__container_data if pattern.search(v)}
+        else:
+            return None
+
     def _wrap_output(self, output):
         if self.inline:
             self.__container_data = output
@@ -91,7 +104,10 @@ class dictview:
 
         if hasattr(self.__container_data, '__getitem__'):
             try:
-                res = self.__container_data.__getitem__(item)
+                if isinstance(item, re.Pattern):
+                    res = self.__search(item)
+                else:
+                    res = self.__container_data.__getitem__(item)
             except IndexError:
                 res = None
             except KeyError:
