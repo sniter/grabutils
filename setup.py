@@ -16,9 +16,13 @@ rest_deps = [
     'requests'
 ]
 
+img_deps = [
+    'Pillow'
+]
+
 setuptools.setup(
     name="grabutils",
-    version="0.0.25",
+    version="0.0.27",
     author="Ilya Babich",
     author_email="sniter@gmail.com",
     description="Utils and helpers for crawling websites",
@@ -30,7 +34,8 @@ setuptools.setup(
         'bs': bs_deps,
         'ssh': ssh_deps,
         'rest': rest_deps,
-        'all': bs_deps + ssh_deps + rest_deps
+        'img': img_deps,
+        'all': bs_deps + ssh_deps + rest_deps + img_deps
     },
     tests_require=[
         'pytest'
