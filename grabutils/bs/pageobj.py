@@ -177,7 +177,10 @@ class Nested:
 
 
 inner_text = op.attrgetter('string')
-stripped = op.methodcaller('strip')
+
+
+def stripped(value: str):
+    return value.strip() if value else ''
 
 
 def as_attr(attr, default=None):

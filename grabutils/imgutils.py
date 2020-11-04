@@ -1,3 +1,6 @@
+import abc
+import io
+
 from PIL import Image, ImageOps
 
 

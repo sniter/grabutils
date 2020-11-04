@@ -22,7 +22,7 @@ img_deps = [
 
 setuptools.setup(
     name="grabutils",
-    version="0.0.27",
+    version="0.0.28",
     author="Ilya Babich",
     author_email="sniter@gmail.com",
     description="Utils and helpers for crawling websites",
